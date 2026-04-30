@@ -22,6 +22,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/reports")
 @CrossOrigin(origins = "*")
+/**
+ * Reports Controller for analytics and dashboard data.
+ *
+ * Exposes endpoints that aggregate tool, kit, issuance, and staff statistics.
+ * The controller also supports exporting reports to Excel and delivering
+ * comprehensive summaries for dashboards.
+ */
 public class ReportsController {
 
     @Autowired
@@ -292,15 +299,18 @@ public class ReportsController {
      * Export tool usage report to Excel.
      * Optional filter values: high, less, none
      * Optional location filter for location-wise report
+     * Optional months filter: 1, 2, 3, 6, 12 for last X months
      */
     @GetMapping("/tools/usage/export")
     public ResponseEntity<?> exportToolUsageReport(@RequestParam(required = false) String filter,
-                                                    @RequestParam(required = false) String location) {
+                                                    @RequestParam(required = false) String location,
+                                                    @RequestParam(required = false) Integer months) {
         try {
-            byte[] excelBytes = reportsService.exportToolUsageReportExcel(filter, location);
+            byte[] excelBytes = reportsService.exportToolUsageReportExcel(filter, location, months);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-            headers.setContentDisposition(ContentDisposition.builder("attachment").filename("tool-usage-report.xlsx").build());
+            String filename = "tool-usage-report" + (months != null ? "-" + months + "months" : "") + ".xlsx";
+            headers.setContentDisposition(ContentDisposition.builder("attachment").filename(filename).build());
 
             return ResponseEntity.ok().headers(headers).body(excelBytes);
         } catch (Exception e) {

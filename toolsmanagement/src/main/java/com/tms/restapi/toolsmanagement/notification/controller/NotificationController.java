@@ -11,6 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Notification Controller for delivering system notifications across user roles.
+ *
+ * Provides endpoints for superadmin, admin, and trainer notifications, including
+ * critical alerts, overdue returns, calibration reminders, and read status updates.
+ */
 @RestController
 @RequestMapping("/api/notifications")
 @CrossOrigin(origins = "*")
@@ -20,16 +26,18 @@ public class NotificationController {
     private NotificationService notificationService;
 
     /**
-     * GET /api/notifications/superadmin
-     * Fetch ALL critical system notifications for SUPERADMIN
+     * Retrieve all critical notifications for the superadmin.
      *
-     * Includes:
-     * - TOOL_MISSING
-     * - TOOL_OBSOLETE
-     * - TOOL_DAMAGED
-     * - ALL OVERDUE RETURNS
+     * API Endpoint: GET /api/notifications/superadmin
      *
-     * Response ordered by createdAt DESC
+     * Response Sample:
+     * {
+     *   "success": true,
+     *   "count": 3,
+     *   "data": [ ... ]
+     * }
+     *
+     * @return ResponseEntity containing superadmin notifications
      */
     @GetMapping("/superadmin")
     public ResponseEntity<?> getSuperadminNotifications() {
@@ -53,17 +61,12 @@ public class NotificationController {
     }
 
     /**
-     * GET /api/notifications/admin?location={location}
-     * Fetch notifications ONLY for given location (ADMIN role)
+     * Retrieve notifications for a specific admin location.
      *
-     * Includes:
-     * - Calibration reminders
-     * - Trainer overdue returns
-     * - Damaged tools in that location
+     * API Endpoint: GET /api/notifications/admin?location={location}
      *
-     * Response ordered by createdAt DESC
-     *
-     * @param location The location to fetch notifications for (required)
+     * @param location Location to filter notifications by
+     * @return ResponseEntity containing admin notifications
      */
     @GetMapping("/admin")
     public ResponseEntity<?> getAdminNotifications(
@@ -96,18 +99,12 @@ public class NotificationController {
     }
 
     /**
-     * GET /api/notifications/trainer?trainerId={trainerId}
-     * Fetch notifications ONLY for that trainer
+     * Retrieve notifications for a specific trainer.
      *
-     * Includes:
-     * - Tool issuance reminders
-     * - Return due tomorrow
-     * - Overdue return alerts
-     * - Training schedule reminders
+     * API Endpoint: GET /api/notifications/trainer?trainerId={trainerId}
      *
-     * Response ordered by createdAt DESC
-     *
-     * @param trainerId The trainer ID to fetch notifications for (required)
+     * @param trainerId Trainer identifier to filter notifications
+     * @return ResponseEntity containing trainer notifications
      */
     @GetMapping("/trainer")
     public ResponseEntity<?> getTrainerNotifications(
@@ -140,8 +137,11 @@ public class NotificationController {
     }
 
     /**
-     * GET /api/notifications/critical
-     * Fetch all critical notifications across the system
+     * Retrieve all critical notifications.
+     *
+     * API Endpoint: GET /api/notifications/critical
+     *
+     * @return ResponseEntity containing critical notifications
      */
     @GetMapping("/critical")
     public ResponseEntity<?> getCriticalNotifications() {
@@ -165,8 +165,12 @@ public class NotificationController {
     }
 
     /**
-     * PUT /api/notifications/{notificationId}/read
-     * Mark a notification as read
+     * Mark a notification as read.
+     *
+     * API Endpoint: PUT /api/notifications/{notificationId}/read
+     *
+     * @param notificationId Notification identifier to mark read
+     * @return ResponseEntity containing updated notification status
      */
     @PutMapping("/{notificationId}/read")
     public ResponseEntity<?> markNotificationAsRead(

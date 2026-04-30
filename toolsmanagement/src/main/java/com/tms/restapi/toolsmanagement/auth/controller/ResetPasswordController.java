@@ -13,6 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Reset Password Controller for password recovery workflows.
+ *
+ * Supports requesting OTP, verifying OTP, and resetting passwords for
+ * ADMIN, TRAINER, SECURITY, and SUPERADMIN roles.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
@@ -36,6 +42,22 @@ public class ResetPasswordController {
     @Autowired
     private EmailService emailService;
 
+    /**
+     * Reset password after OTP verification.
+     *
+     * API Endpoint: POST /api/auth/reset-password
+     *
+     * Request Payload Sample:
+     * {
+     *   "role": "TRAINER",
+     *   "email": "ravi@example.com",
+     *   "newPassword": "NewPass123",
+     *   "confirmPassword": "NewPass123"
+     * }
+     *
+     * @param request ResetPasswordRequest containing role, email, and new password
+     * @return ResponseEntity with status message
+     */
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
 
@@ -50,7 +72,6 @@ public class ResetPasswordController {
 
         String role = request.getRole().trim().toUpperCase();
 
-        // Ensure OTP was verified for this email+role
         if (!otpService.isVerified(role, request.getEmail())) {
             return ResponseEntity.badRequest().body("OTP not verified or expired. Please verify OTP before resetting password.");
         }
@@ -60,19 +81,15 @@ public class ResetPasswordController {
                 case "ADMIN":
                     adminService.resetPassword(request.getEmail(), request.getNewPassword());
                     break;
-
                 case "TRAINER":
                     trainerService.resetPassword(request.getEmail(), request.getNewPassword());
                     break;
-
                 case "SECURITY":
                     securityService.resetPassword(request.getEmail(), request.getNewPassword());
                     break;
-
                 case "SUPERADMIN":
                     superAdminService.resetPassword(request.getEmail(), request.getNewPassword());
                     break;
-
                 default:
                     return ResponseEntity.badRequest().body("Invalid role. Use ADMIN, TRAINER, SECURITY or SUPERADMIN");
             }
@@ -80,12 +97,24 @@ public class ResetPasswordController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
-        // clear OTP after successful reset
         otpService.clear(role, request.getEmail());
-
         return ResponseEntity.ok("Password reset successful");
     }
 
+    /**
+     * Request OTP for password reset.
+     *
+     * API Endpoint: POST /api/auth/request-reset-otp
+     *
+     * Request Payload Sample:
+     * {
+     *   "role": "SECURITY",
+     *   "email": "raj@example.com"
+     * }
+     *
+     * @param request OtpRequest containing role and email
+     * @return ResponseEntity with status message
+     */
     @PostMapping("/request-reset-otp")
     public ResponseEntity<?> requestResetOtp(@RequestBody OtpRequest request) {
         if (request.getRole() == null || request.getEmail() == null) {
@@ -94,7 +123,6 @@ public class ResetPasswordController {
 
         String role = request.getRole().trim().toUpperCase();
 
-        // confirm user exists for role
         boolean exists;
         switch (role) {
             case "ADMIN":
@@ -120,13 +148,27 @@ public class ResetPasswordController {
         try {
             emailService.sendOtp(request.getEmail(), otp, role);
         } catch (RuntimeException e) {
-            // If mail not configured, return success with OTP in body for development
             return ResponseEntity.ok("OTP (dev): " + otp + ". Mail sending failed: " + e.getMessage());
         }
 
         return ResponseEntity.ok("OTP sent to email if mail configured");
     }
 
+    /**
+     * Verify the OTP sent for password reset.
+     *
+     * API Endpoint: POST /api/auth/verify-reset-otp
+     *
+     * Request Payload Sample:
+     * {
+     *   "role": "ADMIN",
+     *   "email": "alice@example.com",
+     *   "otp": "123456"
+     * }
+     *
+     * @param request OtpVerifyRequest containing role, email, and OTP
+     * @return ResponseEntity with verification status
+     */
     @PostMapping("/verify-reset-otp")
     public ResponseEntity<?> verifyResetOtp(@RequestBody OtpVerifyRequest request) {
         if (request.getRole() == null || request.getEmail() == null || request.getOtp() == null) {

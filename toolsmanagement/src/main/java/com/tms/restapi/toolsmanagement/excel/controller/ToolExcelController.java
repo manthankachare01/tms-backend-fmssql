@@ -8,6 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.tms.restapi.toolsmanagement.excel.dto.ExcelResponse;
 import com.tms.restapi.toolsmanagement.excel.service.ToolExcelService;
 
+/**
+ * Tool Excel Controller for bulk tool import operations.
+ *
+ * This controller accepts Excel uploads to create or update tool inventory
+ * records in bulk and returns a summary of processing results.
+ */
 @RestController
 @RequestMapping("/api/tools")
 public class ToolExcelController {

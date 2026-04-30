@@ -217,35 +217,46 @@ public class ReportsService {
     }
 
     /**
-     * Get tool usage report records filtered by usage category and optional location.
+     * Get tool usage report records filtered by usage category, optional location, and optional months.
      * Supported filters: high, less, none.
+     * Months: 1, 2, 3, 6, 12 for last X months of issuances.
      */
-    public List<ToolUsageReportDTO> getToolUsageReport(String usageFilter, String location) {
+    public List<ToolUsageReportDTO> getToolUsageReport(String usageFilter, String location, Integer months) {
         try {
             String filter = normalizeUsageFilter(usageFilter);
-            StringBuilder sql = new StringBuilder("SELECT id, description, tool_no, location, issue_count, availability FROM tools");
+            StringBuilder sql = new StringBuilder(
+                "SELECT t.id, t.description, t.tool_no, t.location, COUNT(ir.id) as issue_count, t.availability " +
+                "FROM tools t " +
+                "LEFT JOIN issuance_requests ir ON t.id = ir.tool_id"
+            );
             StringBuilder whereClause = new StringBuilder();
 
-            if ("none".equals(filter)) {
-                whereClause.append("issue_count = 0");
-            } else if ("less".equals(filter)) {
-                whereClause.append("issue_count > 0 AND issue_count < 5");
-            } else if ("high".equals(filter)) {
-                whereClause.append("issue_count >= 5");
+            // Add date filter if months is specified
+            if (months != null && months > 0) {
+                sql.append(" AND ir.approval_date >= DATEADD(MONTH, -" + months + ", GETDATE())");
             }
 
+            // Add location filter
             if (location != null && !location.trim().isEmpty()) {
-                if (whereClause.length() > 0) {
-                    whereClause.append(" AND ");
-                }
-                whereClause.append("LOWER(TRIM(location)) = LOWER(TRIM('" + location.trim() + "'))");
+                whereClause.append("LOWER(TRIM(t.location)) = LOWER(TRIM('" + location.trim() + "'))");
             }
 
             if (whereClause.length() > 0) {
                 sql.append(" WHERE ").append(whereClause);
             }
 
-            sql.append(" ORDER BY issue_count DESC, description");
+            sql.append(" GROUP BY t.id, t.description, t.tool_no, t.location, t.availability");
+
+            // Apply usage filter on the calculated issue_count
+            if ("none".equals(filter)) {
+                sql.append(" HAVING COUNT(i.id) = 0");
+            } else if ("less".equals(filter)) {
+                sql.append(" HAVING COUNT(i.id) > 0 AND COUNT(i.id) < 5");
+            } else if ("high".equals(filter)) {
+                sql.append(" HAVING COUNT(i.id) >= 5");
+            }
+
+            sql.append(" ORDER BY COUNT(i.id) DESC, t.description");
 
             List<Map<String, Object>> results = jdbcTemplate.queryForList(sql.toString());
 
@@ -269,8 +280,8 @@ public class ReportsService {
         }
     }
 
-    public byte[] exportToolUsageReportExcel(String usageFilter, String location) {
-        List<ToolUsageReportDTO> rows = getToolUsageReport(usageFilter, location);
+    public byte[] exportToolUsageReportExcel(String usageFilter, String location, Integer months) {
+        List<ToolUsageReportDTO> rows = getToolUsageReport(usageFilter, location, months);
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Tool Usage Report");
             Row headerRow = sheet.createRow(0);
