@@ -37,10 +37,10 @@ public class Notification {
     @Column(nullable = false)
     private String status; // UNREAD, READ
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, columnDefinition = "datetime2")
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(columnDefinition = "datetime2")
     private LocalDateTime readAt;
 
     public Notification() {

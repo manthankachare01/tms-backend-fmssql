@@ -1,17 +1,25 @@
--- V4__create_chatbot_qa_table.sql
+-- V4__create_chatbot_qa_table.sql (MSSQL)
 -- Create table for storing predefined chatbot questions and answers
 
-CREATE TABLE IF NOT EXISTS chatbot_qa (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    question VARCHAR(500) NOT NULL,
-    answer LONGTEXT NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_question (question),
-    INDEX idx_is_active (is_active)
-);
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'chatbot_qa')
+BEGIN
+    CREATE TABLE chatbot_qa (
+        id BIGINT IDENTITY(1,1) PRIMARY KEY,
+        question VARCHAR(500) NOT NULL,
+        answer NVARCHAR(MAX) NOT NULL,
+        is_active BIT NOT NULL DEFAULT 1,
+        created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+        updated_at DATETIME2 NOT NULL DEFAULT GETDATE()
+    );
+    
+    -- Create indexes
+    CREATE INDEX idx_question ON chatbot_qa(question);
+    CREATE INDEX idx_is_active ON chatbot_qa(is_active);
+END;
 
 -- Insert sample Q&A
-INSERT INTO chatbot_qa (question, answer, is_active, created_at, updated_at) 
-VALUES ('What is system name?', 'Tools Management System', true, NOW(), NOW());
+IF NOT EXISTS (SELECT 1 FROM chatbot_qa WHERE question = 'What is system name?')
+BEGIN
+    INSERT INTO chatbot_qa (question, answer, is_active, created_at, updated_at) 
+    VALUES ('What is system name?', 'Tools Management System', 1, GETDATE(), GETDATE());
+END;

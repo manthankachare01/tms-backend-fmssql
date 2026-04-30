@@ -35,10 +35,10 @@ public class Kit {
     private Integer availability = 1;
 
     // Issuance and return dates
-    @Column(name = "issuance_date")
+    @Column(name = "issuance_date", columnDefinition = "datetime2")
     private LocalDateTime issuanceDate;
 
-    @Column(name = "return_date")
+    @Column(name = "return_date", columnDefinition = "datetime2")
     private LocalDateTime returnDate;
 
     @Column(name = "last_borrowed_by")
@@ -68,7 +68,7 @@ public class Kit {
     @Column(name = "created_by")
     private String createdBy;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "datetime2")
     private LocalDateTime createdAt;
 
     // getters and setters

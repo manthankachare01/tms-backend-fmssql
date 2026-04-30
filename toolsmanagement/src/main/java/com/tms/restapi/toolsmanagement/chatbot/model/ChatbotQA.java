@@ -17,10 +17,10 @@ public class ChatbotQA {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String answer;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "datetime2")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", columnDefinition = "datetime2")
     private LocalDateTime updatedAt;
 
     @Column(name = "is_active", nullable = false)

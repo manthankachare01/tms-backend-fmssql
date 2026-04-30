@@ -245,8 +245,8 @@ public class ChatbotService {
             // Specific tool keyword supplied
             String locationClause = location != null ? " AND LOWER(location) = '" + location.toLowerCase() + "'" : "";
             List<Map<String, Object>> results = jdbcTemplate.queryForList(
-                "SELECT description, tool_no, si_no, availability, quantity, location, tool_condition " +
-                "FROM tools WHERE LOWER(description) LIKE ?" + locationClause + " LIMIT 8",
+                "SELECT TOP 8 description, tool_no, si_no, availability, quantity, location, tool_condition " +
+                "FROM tools WHERE LOWER(description) LIKE ?" + locationClause,
                 "%" + toolKeyword + "%"
             );
 
@@ -294,10 +294,10 @@ public class ChatbotService {
             if (toolKeyword.isEmpty()) return null;
 
             List<Map<String, Object>> results = jdbcTemplate.queryForList(
-                "SELECT description, tool_no, si_no, tool_location, location, quantity, " +
+                "SELECT TOP 5 description, tool_no, si_no, tool_location, location, quantity, " +
                 "availability, tool_condition, calibration_required, last_calibration_date, " +
                 "next_calibration_date, last_borrowed_by, issue_count, remark " +
-                "FROM tools WHERE LOWER(description) LIKE ? LIMIT 5",
+                "FROM tools WHERE LOWER(description) LIKE ?",
                 "%" + toolKeyword + "%"
             );
 
@@ -350,8 +350,8 @@ public class ChatbotService {
             if (toolKeyword.isEmpty()) return null;
 
             List<Map<String, Object>> results = jdbcTemplate.queryForList(
-                "SELECT description, tool_no, tool_location, location, availability " +
-                "FROM tools WHERE LOWER(description) LIKE ? LIMIT 5",
+                "SELECT TOP 5 description, tool_no, tool_location, location, availability " +
+                "FROM tools WHERE LOWER(description) LIKE ?",
                 "%" + toolKeyword + "%"
             );
 
@@ -398,15 +398,15 @@ public class ChatbotService {
 
             if (conditionFilter != null && toolKeyword.isEmpty()) {
                 results = jdbcTemplate.queryForList(
-                    "SELECT description, tool_no, tool_condition, location, availability " +
-                    "FROM tools WHERE LOWER(tool_condition) = ? ORDER BY description LIMIT 10",
+                    "SELECT TOP 10 description, tool_no, tool_condition, location, availability " +
+                    "FROM tools WHERE LOWER(tool_condition) = ? ORDER BY description",
                     conditionFilter.toLowerCase()
                 );
                 sb.append("Tools with condition '").append(conditionFilter).append("':\n");
             } else if (!toolKeyword.isEmpty()) {
                 results = jdbcTemplate.queryForList(
-                    "SELECT description, tool_no, tool_condition, location, availability " +
-                    "FROM tools WHERE LOWER(description) LIKE ? LIMIT 5",
+                    "SELECT TOP 5 description, tool_no, tool_condition, location, availability " +
+                    "FROM tools WHERE LOWER(description) LIKE ?",
                     "%" + toolKeyword + "%"
                 );
                 sb.append("Condition details for '").append(toolKeyword).append("':\n");
@@ -462,8 +462,8 @@ public class ChatbotService {
             }
 
             List<Map<String, Object>> results = jdbcTemplate.queryForList(
-                "SELECT description, tool_no, availability, tool_condition " +
-                "FROM tools WHERE LOWER(location) = ? ORDER BY description LIMIT 15",
+                "SELECT TOP 15 description, tool_no, availability, tool_condition " +
+                "FROM tools WHERE LOWER(location) = ? ORDER BY description",
                 location.toLowerCase()
             );
 
@@ -505,7 +505,7 @@ public class ChatbotService {
             List<Map<String, Object>> results = jdbcTemplate.queryForList(
                 "SELECT description, tool_no, issue_count, location, availability " +
                 "FROM tools " + locationClause +
-                "ORDER BY issue_count DESC LIMIT ?",
+                "ORDER BY issue_count DESC OFFSET 0 ROWS FETCH NEXT ? ROWS ONLY",
                 limit
             );
 
@@ -542,17 +542,17 @@ public class ChatbotService {
             String location = extractLocation(q);
 
             String dateCondition = overdue
-                ? "next_calibration_date < CURDATE()"
-                : "next_calibration_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)";
+                ? "next_calibration_date < CAST(GETDATE() AS DATE)"
+                : "next_calibration_date <= DATEADD(DAY, 30, CAST(GETDATE() AS DATE))";
 
             String locationClause = location != null
                 ? " AND LOWER(location) = '" + location.toLowerCase() + "'" : "";
 
             List<Map<String, Object>> results = jdbcTemplate.queryForList(
-                "SELECT description, tool_no, location, last_calibration_date, " +
+                "SELECT TOP 10 description, tool_no, location, last_calibration_date, " +
                 "next_calibration_date, tool_condition " +
-                "FROM tools WHERE calibration_required = true AND " + dateCondition +
-                locationClause + " ORDER BY next_calibration_date ASC LIMIT 10"
+                "FROM tools WHERE calibration_required = 1 AND " + dateCondition +
+                locationClause + " ORDER BY next_calibration_date ASC"
             );
 
             if (results.isEmpty()) {
@@ -595,9 +595,9 @@ public class ChatbotService {
 
             if (!toolKeyword.isEmpty()) {
                 List<Map<String, Object>> results = jdbcTemplate.queryForList(
-                    "SELECT description, tool_no, calibration_required, calibration_period_months, " +
+                    "SELECT TOP 5 description, tool_no, calibration_required, calibration_period_months, " +
                     "last_calibration_date, next_calibration_date " +
-                    "FROM tools WHERE LOWER(description) LIKE ? LIMIT 5",
+                    "FROM tools WHERE LOWER(description) LIKE ?",
                     "%" + toolKeyword + "%"
                 );
 
@@ -623,10 +623,10 @@ public class ChatbotService {
             // Summary of all calibration-required tools
             Map<String, Object> summary = jdbcTemplate.queryForMap(
                 "SELECT COUNT(*) AS total_requiring, " +
-                "SUM(CASE WHEN next_calibration_date < CURDATE() THEN 1 ELSE 0 END) AS overdue, " +
-                "SUM(CASE WHEN next_calibration_date BETWEEN CURDATE() " +
-                "    AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) AS due_soon " +
-                "FROM tools WHERE calibration_required = true"
+                "SUM(CASE WHEN next_calibration_date < CAST(GETDATE() AS DATE) THEN 1 ELSE 0 END) AS overdue, " +
+                "SUM(CASE WHEN next_calibration_date BETWEEN CAST(GETDATE() AS DATE) " +
+                "    AND DATEADD(DAY, 30, CAST(GETDATE() AS DATE)) THEN 1 ELSE 0 END) AS due_soon " +
+                "FROM tools WHERE calibration_required = 1"
             );
             return String.format(
                 "Calibration Summary — Tools requiring calibration: %d | Overdue: %d | Due in 30 days: %d",
@@ -688,11 +688,11 @@ public class ChatbotService {
             if (trainerKeyword != null && !trainerKeyword.isEmpty())
                 sql.append(" AND LOWER(trainer_name) LIKE '%").append(trainerKeyword.toLowerCase()).append("%'");
             if (location != null) sql.append(" AND LOWER(location) = '").append(location.toLowerCase()).append("'");
-            if (isToday) sql.append(" AND DATE(issuance_date) = CURDATE()");
+            if (isToday) sql.append(" AND CAST(issuance_date AS DATE) = CAST(GETDATE() AS DATE)");
             if (isTypeKit) sql.append(" AND LOWER(issuance_type) = 'kit'");
             if (isTypeTool) sql.append(" AND LOWER(issuance_type) = 'tool'");
 
-            sql.append(" ORDER BY issuance_date DESC LIMIT 10");
+            sql.append(" ORDER BY issuance_date DESC OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY");
 
             List<Map<String, Object>> results = jdbcTemplate.queryForList(sql.toString());
 
@@ -761,17 +761,15 @@ public class ChatbotService {
             if (q.contains("available") || q.contains("availability")) {
                 String location = extractLocation(q);
 
-                String sql = "SELECT kit_id, kit_name, training_name, qualification_level, " +
+                String sql = "SELECT TOP 10 kit_id, kit_name, training_name, qualification_level, " +
                         "availability, location, kit_condition FROM kits WHERE 1=1";
 
                 List<Map<String, Object>> results;
 
                 if (location != null) {
                     sql += " AND LOWER(location) = ?";
-                    sql += " LIMIT 10";
                     results = jdbcTemplate.queryForList(sql, location.toLowerCase());
                 } else {
-                    sql += " LIMIT 10";
                     results = jdbcTemplate.queryForList(sql);
                 }
 
@@ -809,10 +807,11 @@ public class ChatbotService {
 
                     List<Map<String, Object>> results = jdbcTemplate.queryForList(
                             "SELECT t.description, t.tool_no, t.availability, t.tool_condition " +
-                                    "FROM tools t " +
-                                    "INNER JOIN kit_tools kt ON kt.tool_id_fk = t.id " +
-                                    "INNER JOIN kits k ON k.id = kt.kit_id_fk " +
-                                    "WHERE LOWER(k.kit_id) LIKE ? OR LOWER(k.kit_name) LIKE ? LIMIT 15",
+"SELECT TOP 15 t.description, t.tool_no, t.availability, t.tool_condition " +
+                    "FROM tools t " +
+                    "INNER JOIN kit_tools kt ON kt.tool_id_fk = t.id " +
+                    "INNER JOIN kits k ON k.id = kt.kit_id_fk " +
+                    "WHERE LOWER(k.kit_id) LIKE ? OR LOWER(k.kit_name) LIKE ?",
                             "%" + kitKeyword.toLowerCase() + "%",
                             "%" + kitKeyword.toLowerCase() + "%");
 
@@ -849,8 +848,8 @@ public class ChatbotService {
 
             // ── DEFAULT: LIST ALL KITS ─────────────────────────────
             List<Map<String, Object>> kits = jdbcTemplate.queryForList(
-                    "SELECT kit_id, kit_name, training_name, qualification_level, " +
-                            "availability, location, kit_condition FROM kits LIMIT 10");
+                    "SELECT TOP 10 kit_id, kit_name, training_name, qualification_level, " +
+                            "availability, location, kit_condition FROM kits");
 
             if (kits.isEmpty())
                 return "No kits found in the system.";
@@ -892,8 +891,8 @@ public class ChatbotService {
 
             if (!trainerKeyword.isEmpty() && trainerKeyword.length() > 2) {
                 List<Map<String, Object>> results = jdbcTemplate.queryForList(
-                    "SELECT name, email, contact, location, status, active_issuance, overdue_issuance " +
-                    "FROM trainers WHERE LOWER(name) LIKE ? LIMIT 5",
+                    "SELECT TOP 5 name, email, contact, location, status, active_issuance, overdue_issuance " +
+                    "FROM trainers WHERE LOWER(name) LIKE ?",
                     "%" + trainerKeyword + "%"
                 );
 
@@ -931,8 +930,8 @@ public class ChatbotService {
                 ? " WHERE LOWER(location) = '" + location.toLowerCase() + "'" : "";
 
             List<Map<String, Object>> trainers = jdbcTemplate.queryForList(
-                "SELECT name, email, contact, location, status FROM trainers" +
-                locationClause + " ORDER BY name LIMIT 10"
+                "SELECT TOP 10 name, email, contact, location, status FROM trainers" +
+                locationClause + " ORDER BY name"
             );
 
             if (trainers.isEmpty()) {
@@ -969,8 +968,8 @@ public class ChatbotService {
 
             if (!adminKeyword.isEmpty() && adminKeyword.length() > 2) {
                 List<Map<String, Object>> results = jdbcTemplate.queryForList(
-                    "SELECT admin_id, name, email, contact, location, status " +
-                    "FROM admins WHERE LOWER(name) LIKE ? LIMIT 5",
+                    "SELECT TOP 5 admin_id, name, email, contact, location, status " +
+                    "FROM admins WHERE LOWER(name) LIKE ?",
                     "%" + adminKeyword + "%"
                 );
 
@@ -991,8 +990,8 @@ public class ChatbotService {
                 ? " WHERE LOWER(location) = '" + location.toLowerCase() + "'" : "";
 
             List<Map<String, Object>> admins = jdbcTemplate.queryForList(
-                "SELECT admin_id, name, email, location, status FROM admins" +
-                locationClause + " ORDER BY name LIMIT 10"
+                "SELECT TOP 10 admin_id, name, email, location, status FROM admins" +
+                locationClause + " ORDER BY name"
             );
 
             if (admins.isEmpty()) {
@@ -1063,7 +1062,7 @@ public class ChatbotService {
             // Issuance count
             if (matchesAny(q, "issuance", "request")) {
                 boolean isToday = matchesAny(q, "today");
-                String dateClause = isToday ? " AND DATE(issuance_date) = CURDATE()" : "";
+                String dateClause = isToday ? " AND CAST(issuance_date AS DATE) = CAST(GETDATE() AS DATE)" : "";
                 Map<String, Object> stats = jdbcTemplate.queryForMap(
                     "SELECT " +
                     "COUNT(*) AS total, " +
@@ -1118,8 +1117,8 @@ public class ChatbotService {
             if (keyword.length() < 3) return null;
 
             List<Map<String, Object>> results = jdbcTemplate.queryForList(
-                "SELECT description, tool_no, availability, location, tool_condition " +
-                "FROM tools WHERE LOWER(description) LIKE ? LIMIT 5",
+                "SELECT TOP 5 description, tool_no, availability, location, tool_condition " +
+                "FROM tools WHERE LOWER(description) LIKE ?",
                 "%" + keyword + "%"
             );
 

@@ -19,6 +19,7 @@ public class ReturnRecord {
     @JoinColumn(name = "issuance_id")
     private Issuance issuance;
 
+    @Column(columnDefinition = "datetime2")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime actualReturnDate;
 

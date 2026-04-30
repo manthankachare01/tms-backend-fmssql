@@ -35,12 +35,12 @@ public class KeyIssuance {
     @Column(name = "status", nullable = false)
     private String status;
 
+    @Column(name = "date_of_issuance", nullable = false, columnDefinition = "datetime2")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "date_of_issuance", nullable = false)
     private LocalDateTime dateOfIssuance;
 
+    @Column(name = "date_of_return", columnDefinition = "datetime2")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "date_of_return")
     private LocalDateTime dateOfReturn;
 
     // Getters and setters

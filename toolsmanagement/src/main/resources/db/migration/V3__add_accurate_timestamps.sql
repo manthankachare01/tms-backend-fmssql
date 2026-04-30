@@ -1,11 +1,12 @@
--- Migration: Convert issuance_date and returnDate from DATE to DATETIME for accurate timestamps
+-- Migration: Convert issuance_date and returnDate from DATE to DATETIME for accurate timestamps (MSSQL)
 -- Also convert actualReturnDate from DATE to DATETIME
 
 -- Update issuance_requests table
 ALTER TABLE issuance_requests
-  MODIFY COLUMN issuance_date DATETIME NOT NULL,
-  MODIFY COLUMN return_date DATETIME;
+  ALTER COLUMN issuance_date DATETIME2 NOT NULL;
+ALTER TABLE issuance_requests
+  ALTER COLUMN return_date DATETIME2;
 
 -- Update return_records table
 ALTER TABLE return_records
-  MODIFY COLUMN actual_return_date DATETIME NOT NULL;
+  ALTER COLUMN actual_return_date DATETIME2 NOT NULL;

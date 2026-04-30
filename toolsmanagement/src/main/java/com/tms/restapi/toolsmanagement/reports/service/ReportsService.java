@@ -116,7 +116,7 @@ public class ReportsService {
 
             // Pending returns (status = 'Issued' but return_date is null or in future)
             Long pendingReturns = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM issuance WHERE (status = 'Issued' OR status = 'issued') AND (return_date IS NULL OR return_date > NOW())",
+                "SELECT COUNT(*) FROM issuance WHERE (status = 'Issued' OR status = 'issued') AND (return_date IS NULL OR return_date > GETDATE())",
                 Long.class
             );
 
@@ -605,7 +605,7 @@ public class ReportsService {
             }
             
             sql.append("ORDER BY t.issue_count DESC " +
-                      "LIMIT ?");
+                      "OFFSET 0 ROWS FETCH NEXT ? ROWS ONLY");
 
             if (location != null && !location.trim().isEmpty()) {
                 return jdbcTemplate.queryForList(sql.toString(), location, limit);
@@ -637,13 +637,13 @@ public class ReportsService {
 
             // Query issuance counts from issuance_requests using approval_date
             StringBuilder issueSql = new StringBuilder();
-            issueSql.append("SELECT DATE_FORMAT(approval_date, '%Y-%m') as month, COUNT(*) as issue_count ");
+            issueSql.append("SELECT CONVERT(VARCHAR(7), approval_date, 120) as month, COUNT(*) as issue_count ");
             issueSql.append("FROM issuance_requests ");
             issueSql.append("WHERE approval_date >= ? ");
             if (location != null && !location.trim().isEmpty()) {
                 issueSql.append("AND LOWER(TRIM(location)) = LOWER(TRIM(?)) ");
             }
-            issueSql.append("GROUP BY DATE_FORMAT(approval_date, '%Y-%m') ");
+            issueSql.append("GROUP BY CONVERT(VARCHAR(7), approval_date, 120) ");
             issueSql.append("ORDER BY month ASC");
 
             List<Map<String, Object>> issueRows;
@@ -655,14 +655,14 @@ public class ReportsService {
 
             // Query return counts from return_records using actual_return_date (join to issuance_requests for location)
             StringBuilder returnSql = new StringBuilder();
-            returnSql.append("SELECT DATE_FORMAT(rr.actual_return_date, '%Y-%m') as month, COUNT(*) as return_count ");
+            returnSql.append("SELECT CONVERT(VARCHAR(7), rr.actual_return_date, 120) as month, COUNT(*) as return_count ");
             returnSql.append("FROM return_records rr ");
             returnSql.append("JOIN issuance_requests ir ON rr.issuance_id = ir.id ");
             returnSql.append("WHERE rr.actual_return_date >= ? ");
             if (location != null && !location.trim().isEmpty()) {
                 returnSql.append("AND LOWER(TRIM(ir.location)) = LOWER(TRIM(?)) ");
             }
-            returnSql.append("GROUP BY DATE_FORMAT(rr.actual_return_date, '%Y-%m') ");
+            returnSql.append("GROUP BY CONVERT(VARCHAR(7), rr.actual_return_date, 120) ");
             returnSql.append("ORDER BY month ASC");
 
             List<Map<String, Object>> returnRows;

@@ -71,10 +71,10 @@ public class Tool {
     private Integer issueCount = 0;
 
     // Issuance and return dates
-    @Column(name = "issuance_date")
+    @Column(name = "issuance_date", columnDefinition = "datetime2")
     private LocalDateTime issuanceDate;
 
-    @Column(name = "return_date")
+    @Column(name = "return_date", columnDefinition = "datetime2")
     private LocalDateTime returnDate;
 
     // Flag: 0 = standalone tool, 1 = tool belongs to a kit

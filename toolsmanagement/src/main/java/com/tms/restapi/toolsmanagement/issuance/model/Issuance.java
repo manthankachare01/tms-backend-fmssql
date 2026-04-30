@@ -17,9 +17,11 @@ public class Issuance {
     private String trainerName;
     private String trainingName;
     
+    @Column(columnDefinition = "datetime2")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime issuanceDate;
     
+    @Column(columnDefinition = "datetime2")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime returnDate;
     
@@ -35,6 +37,7 @@ public class Issuance {
     // Admin approval fields
     private String approvedBy;
     
+    @Column(columnDefinition = "datetime2")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvalDate;
     
