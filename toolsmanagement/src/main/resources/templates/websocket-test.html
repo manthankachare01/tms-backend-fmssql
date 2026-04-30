@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test Console - Tools Management API</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+
+        .section h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .messages {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .message {
+            background: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 4px solid #667eea;
+            border-radius: 3px;
+            word-break: break-word;
+        }
+
+        .message.sent {
+            border-left-color: #28a745;
+            background: #f0f9f4;
+        }
+
+        .message.received {
+            border-left-color: #007bff;
+            background: #f0f7ff;
+        }
+
+        .message.error {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .full-width {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔌 WebSocket Test Console</h1>
+            <p>Tools Management API - Real-Time Data Communication</p>
+        </div>
+
+        <div class="content">
+            <!-- Connection Section -->
+            <div class="section">
+                <h2>Connection</h2>
+                <div id="status" class="status disconnected">Status: Disconnected</div>
+                <div class="button-group">
+                    <button onclick="connect()">Connect</button>
+                    <button onclick="disconnect()">Disconnect</button>
+                </div>
+            </div>
+
+            <!-- Quick Test Section -->
+            <div class="section">
+                <h2>Quick Actions</h2>
+                <div class="form-group">
+                    <label>User ID:</label>
+                    <input type="text" id="userId" value="user123" placeholder="Enter user ID">
+                </div>
+                <div class="full-width">
+                    <button onclick="sendToolUpdate()">📦 Tool Update</button>
+                    <button onclick="sendKitStatus()">📋 Kit Status</button>
+                    <button onclick="sendIssuanceNotify()">📬 Issuance</button>
+                </div>
+            </div>
+
+            <!-- Tool Update Section -->
+            <div class="section">
+                <h2>Tool Update</h2>
+                <div class="form-group">
+                    <label>Tool ID:</label>
+                    <input type="number" id="toolId" value="1" placeholder="Tool ID">
+                </div>
+                <div class="form-group">
+                    <label>Status:</label>
+                    <select id="toolStatus">
+                        <option>AVAILABLE</option>
+                        <option>ISSUED</option>
+                        <option>MAINTENANCE</option>
+                        <option>DAMAGED</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity Available:</label>
+                    <input type="number" id="toolQty" value="10" placeholder="Quantity">
+                </div>
+                <button onclick="sendToolUpdate()">Send Tool Update</button>
+            </div>
+
+            <!-- Kit Status Section -->
+            <div class="section">
+                <h2>Kit Status Update</h2>
+                <div class="form-group">
+                    <label>Kit ID:</label>
+                    <input type="number" id="kitId" value="1" placeholder="Kit ID">
+                </div>
+                <div class="form-group">
+                    <label>Status:</label>
+                    <select id="kitStatus">
+                        <option>ASSEMBLED</option>
+                        <option>DISASSEMBLED</option>
+                        <option>IN_USE</option>
+                    </select>
+                </div>
+                <button onclick="sendKitStatus()">Send Kit Status</button>
+            </div>
+
+            <!-- Issuance Notification Section -->
+            <div class="section">
+                <h2>Issuance Notification</h2>
+                <div class="form-group">
+                    <label>Issued To:</label>
+                    <input type="text" id="issuedTo" value="trainer001" placeholder="Recipient ID">
+                </div>
+                <div class="form-group">
+                    <label>Tool/Kit Details:</label>
+                    <input type="text" id="itemDetails" value="Tool #5 - Wrench Set" placeholder="Item details">
+                </div>
+                <button onclick="sendIssuanceNotify()">Send Issuance Notification</button>
+            </div>
+
+            <!-- Custom Message Section -->
+            <div class="section">
+                <h2>Custom Message</h2>
+                <div class="form-group">
+                    <label>Message Type:</label>
+                    <input type="text" id="msgType" value="CUSTOM" placeholder="Message type">
+                </div>
+                <div class="form-group">
+                    <label>Payload (JSON):</label>
+                    <textarea id="payload" placeholder='{"key": "value"}'></textarea>
+                </div>
+                <button onclick="sendCustomMessage()">Send Custom Message</button>
+            </div>
+
+            <!-- Message Log Section (spans full width) -->
+            <div class="section" style="grid-column: 1 / -1;">
+                <h2>Message Log</h2>
+                <div class="button-group">
+                    <button onclick="clearMessages()" style="background: #dc3545;">Clear Log</button>
+                    <button onclick="exportMessages()" style="background: #28a745;">Export</button>
+                </div>
+                <div class="messages" id="messageLog"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let stompClient = null;
+        let connected = false;
+
+        function connect() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.debug = null; // Disable debug logs
+
+            stompClient.connect({}, (frame) => {
+                connected = true;
+                updateStatus();
+                addMessage('Connected to WebSocket server', 'received');
+
+                // Subscribe to all topics
+                stompClient.subscribe('/topic/tools/updates', (message) => {
+                    addMessage('Tool Update: ' + message.body, 'received');
+                });
+
+                stompClient.subscribe('/topic/kit/status', (message) => {
+                    addMessage('Kit Status: ' + message.body, 'received');
+                });
+
+                stompClient.subscribe('/topic/issuance/notifications', (message) => {
+                    addMessage('Issuance Notification: ' + message.body, 'received');
+                });
+
+                stompClient.subscribe('/user/queue/notifications', (message) => {
+                    addMessage('Private Message: ' + message.body, 'received');
+                });
+
+                stompClient.subscribe('/topic/pong', (message) => {
+                    addMessage('Pong: ' + message.body, 'received');
+                });
+            }, (error) => {
+                connected = false;
+                updateStatus();
+                addMessage('Connection error: ' + error, 'error');
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect(() => {
+                    connected = false;
+                    updateStatus();
+                    addMessage('Disconnected from server', 'received');
+                });
+            }
+        }
+
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            if (connected) {
+                statusDiv.textContent = 'Status: Connected ✓';
+                statusDiv.className = 'status connected';
+            } else {
+                statusDiv.textContent = 'Status: Disconnected ✗';
+                statusDiv.className = 'status disconnected';
+            }
+        }
+
+        function sendToolUpdate() {
+            if (!connected) {
+                addMessage('Not connected to server', 'error');
+                return;
+            }
+
+            const message = {
+                action: 'UPDATE_TOOL',
+                userId: document.getElementById('userId').value,
+                payload: {
+                    toolId: parseInt(document.getElementById('toolId').value),
+                    status: document.getElementById('toolStatus').value,
+                    availableQuantity: parseInt(document.getElementById('toolQty').value)
+                }
+            };
+
+            stompClient.send('/app/tool-update', {}, JSON.stringify(message));
+            addMessage('Sent Tool Update: ' + JSON.stringify(message), 'sent');
+        }
+
+        function sendKitStatus() {
+            if (!connected) {
+                addMessage('Not connected to server', 'error');
+                return;
+            }
+
+            const message = {
+                action: 'UPDATE_KIT',
+                userId: document.getElementById('userId').value,
+                payload: {
+                    kitId: parseInt(document.getElementById('kitId').value),
+                    status: document.getElementById('kitStatus').value
+                }
+            };
+
+            stompClient.send('/app/kit-status', {}, JSON.stringify(message));
+            addMessage('Sent Kit Status: ' + JSON.stringify(message), 'sent');
+        }
+
+        function sendIssuanceNotify() {
+            if (!connected) {
+                addMessage('Not connected to server', 'error');
+                return;
+            }
+
+            const message = {
+                action: 'NOTIFY_ISSUANCE',
+                userId: document.getElementById('userId').value,
+                payload: {
+                    issuedTo: document.getElementById('issuedTo').value,
+                    itemDetails: document.getElementById('itemDetails').value,
+                    timestamp: new Date().toISOString()
+                }
+            };
+
+            stompClient.send('/app/issuance-notify', {}, JSON.stringify(message));
+            addMessage('Sent Issuance Notification: ' + JSON.stringify(message), 'sent');
+        }
+
+        function sendCustomMessage() {
+            if (!connected) {
+                addMessage('Not connected to server', 'error');
+                return;
+            }
+
+            try {
+                const payload = JSON.parse(document.getElementById('payload').value || '{}');
+                const message = {
+                    action: document.getElementById('msgType').value,
+                    userId: document.getElementById('userId').value,
+                    payload: payload
+                };
+
+                // Send to tool-update as a generic endpoint
+                stompClient.send('/app/tool-update', {}, JSON.stringify(message));
+                addMessage('Sent Custom Message: ' + JSON.stringify(message), 'sent');
+            } catch (e) {
+                addMessage('Invalid JSON payload: ' + e.message, 'error');
+            }
+        }
+
+        function addMessage(text, type = 'received') {
+            const logDiv = document.getElementById('messageLog');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + type;
+
+            const time = new Date().toLocaleTimeString();
+            messageDiv.innerHTML = `<div class="message-time">${time}</div><div>${escapeHtml(text)}</div>`;
+
+            logDiv.appendChild(messageDiv);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearMessages() {
+            document.getElementById('messageLog').innerHTML = '';
+        }
+
+        function exportMessages() {
+            const logDiv = document.getElementById('messageLog');
+            const text = logDiv.innerText;
+            const blob = new Blob([text], {type: 'text/plain'});
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'websocket-log.txt';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Auto-connect on page load
+        window.addEventListener('load', () => {
+            connect();
+        });
+
+        // Disconnect on page unload
+        window.addEventListener('beforeunload', () => {
+            disconnect();
+        });
+    </script>
+</body>
+</html>

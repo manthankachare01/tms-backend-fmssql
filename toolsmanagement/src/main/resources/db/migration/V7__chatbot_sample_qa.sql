@@ -1,0 +1,78 @@
+-- V7__chatbot_sample_qa.sql
+-- Seed common Q&A entries for the chatbot
+-- These are answered before dynamic DB search is attempted.
+
+INSERT INTO chatbot_qa (question, answer, is_active, created_at, updated_at) VALUES
+
+-- System / general
+('What is this system?',
+ 'This is the Tools Management System (TMS). It tracks tools, kits, issuances, calibrations, trainers, and admins across plant locations.',
+ true, NOW(), NOW()),
+
+('How do I request a tool?',
+ 'Go to Issuance > New Request. Select the tools or kit you need, enter training details, and submit. The admin at your location will approve or reject the request.',
+ true, NOW(), NOW()),
+
+('How do I return a tool?',
+ 'Go to Issuance > My Issuances. Find the approved record and click the Return button. Confirm the return — the tool availability will be updated automatically.',
+ true, NOW(), NOW()),
+
+('What does Pending status mean?',
+ 'Pending means your issuance request has been submitted and is waiting for the admin to approve or reject it.',
+ true, NOW(), NOW()),
+
+('What does Approved status mean?',
+ 'Approved means the admin has accepted your request. You can now collect the tools/kit from the store.',
+ true, NOW(), NOW()),
+
+('What does Rejected status mean?',
+ 'Rejected means the admin has declined your request. Check the rejection remark for the reason, and you may raise a new request.',
+ true, NOW(), NOW()),
+
+('What does Returned status mean?',
+ 'Returned means the tools/kit have been returned to the store and the issuance is closed.',
+ true, NOW(), NOW()),
+
+-- Tools
+('What is a tool?',
+ 'A tool is a physical item tracked in TMS. Each tool has a unique Tool No, SI No, location, quantity, availability count, condition, and calibration details.',
+ true, NOW(), NOW()),
+
+('What is tool availability?',
+ 'Availability shows how many units of a tool are currently in stock and ready to be issued. When a tool is issued, availability decreases; when returned, it increases.',
+ true, NOW(), NOW()),
+
+('What is tool condition?',
+ 'Tool condition reflects the physical state of the tool — typically Good, Damaged, or Poor. Damaged tools should be reported to the admin.',
+ true, NOW(), NOW()),
+
+('What is calibration?',
+ 'Calibration is the periodic check/adjustment of measuring tools to ensure accuracy. TMS tracks last calibration date and next due date for each calibration-required tool.',
+ true, NOW(), NOW()),
+
+('How do I report a damaged tool?',
+ 'Contact your admin or raise an issuance request with a remark mentioning the damage. The admin can update the tool condition in the system.',
+ true, NOW(), NOW()),
+
+-- Kits
+('What is a kit?',
+ 'A kit is a pre-defined collection of tools bundled together for a specific training. Example: KIT-001 may contain a vernier caliper, multimeter, and torque wrench.',
+ true, NOW(), NOW()),
+
+('How do I request a kit?',
+ 'In New Issuance Request, set issuance type to KIT and select the kit you need. Submit for admin approval.',
+ true, NOW(), NOW()),
+
+-- Calibration
+('How often are tools calibrated?',
+ 'The calibration period varies per tool and is defined in months. TMS sends notifications when calibration is due within 30 days or overdue.',
+ true, NOW(), NOW()),
+
+('Who is responsible for calibration?',
+ 'The admin at each location is responsible for ensuring tools are calibrated on time. They will receive notifications before the due date.',
+ true, NOW(), NOW()),
+
+-- Notifications
+('How do I get calibration notifications?',
+ 'TMS automatically generates calibration notifications for tools due within 30 days. Admins receive these in the Notifications section of the dashboard.',
+ true, NOW(), NOW());

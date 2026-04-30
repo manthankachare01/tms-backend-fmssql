@@ -1,0 +1,323 @@
+{
+  "info": {
+    "name": "Tools Management System - Chatbot & Reports APIs",
+    "description": "Complete API collection for Chatbot and Reports modules",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Chatbot API",
+      "item": [
+        {
+          "name": "Ask Chatbot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"What is system name?\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/chatbot/ask",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "chatbot", "ask"]
+            },
+            "description": "Submit a question to the chatbot and get an answer"
+          }
+        },
+        {
+          "name": "Ask Chatbot - Tools Query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"What tools are available?\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/chatbot/ask",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "chatbot", "ask"]
+            }
+          }
+        },
+        {
+          "name": "Ask Chatbot - Issuance Query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"Show me issuance details\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/chatbot/ask",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "chatbot", "ask"]
+            }
+          }
+        },
+        {
+          "name": "Get All Q&A",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/chatbot/qa/all",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "chatbot", "qa", "all"]
+            },
+            "description": "Retrieve all predefined question-answer pairs"
+          }
+        },
+        {
+          "name": "Add New Q&A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How do I issue a tool?\",\n  \"answer\": \"To issue a tool: 1. Select the tool, 2. Choose trainer/employee, 3. Set return date, 4. Submit for approval, 5. Wait for admin approval\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/chatbot/qa/add",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "chatbot", "qa", "add"]
+            },
+            "description": "Add a new predefined question-answer pair"
+          }
+        },
+        {
+          "name": "Update Q&A",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How do I issue a tool?\",\n  \"answer\": \"Updated answer for issuing tools\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/chatbot/qa/update/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "chatbot", "qa", "update", "1"]
+            },
+            "description": "Update an existing question-answer pair. Replace '1' with actual Q&A ID"
+          }
+        },
+        {
+          "name": "Delete Q&A",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/chatbot/qa/delete/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "chatbot", "qa", "delete", "1"]
+            },
+            "description": "Delete a question-answer pair. Replace '1' with actual Q&A ID"
+          }
+        },
+        {
+          "name": "Chatbot Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/chatbot/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "chatbot", "health"]
+            },
+            "description": "Check if chatbot service is running"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports API",
+      "item": [
+        {
+          "name": "Tool Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/tools/statistics",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "reports", "tools", "statistics"]
+            },
+            "description": "Get overall tool statistics including availability, condition, and calibration needs"
+          }
+        },
+        {
+          "name": "Issuance Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/issuance/statistics",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "reports", "issuance", "statistics"]
+            },
+            "description": "Get issuance statistics including status, approval pipeline, and pending items"
+          }
+        },
+        {
+          "name": "Location Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/location/statistics",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "reports", "location", "statistics"]
+            },
+            "description": "Get statistics grouped by location"
+          }
+        },
+        {
+          "name": "Dashboard Overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/dashboard/overview",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "reports", "dashboard", "overview"]
+            },
+            "description": "Get dashboard overview with key metrics"
+          }
+        },
+        {
+          "name": "Top Issued Tools (Default - 10)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/top-issued-tools",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "reports", "top-issued-tools"]
+            },
+            "description": "Get top 10 most frequently issued tools"
+          }
+        },
+        {
+          "name": "Top Issued Tools (Custom Limit)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/top-issued-tools?limit=20",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "reports", "top-issued-tools"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Get top tools with custom limit (max 100)"
+          }
+        },
+        {
+          "name": "Monthly Issuance Trend",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/monthly-trend",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "reports", "monthly-trend"]
+            },
+            "description": "Get monthly issuance trend for last 12 months"
+          }
+        },
+        {
+          "name": "Comprehensive Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/comprehensive",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "reports", "comprehensive"]
+            },
+            "description": "Get all statistics in one call (optimized for dashboard loading)"
+          }
+        },
+        {
+          "name": "Reports Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/reports/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "reports", "health"]
+            },
+            "description": "Check if reports service is running"
+          }
+        }
+      ]
+    }
+  ]
+}
