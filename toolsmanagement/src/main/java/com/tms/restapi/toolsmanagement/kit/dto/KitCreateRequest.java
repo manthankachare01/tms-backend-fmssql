@@ -2,6 +2,12 @@ package com.tms.restapi.toolsmanagement.kit.dto;
 
 import java.util.List;
 
+/**
+ * Request payload for creating or updating a tool kit.
+ *
+ * Includes kit metadata, associated tool identifiers, alternate tool mappings,
+ * aggregate entries, and optional remarks.
+ */
 public class KitCreateRequest {
 
     private String kitName;
@@ -96,7 +102,9 @@ public class KitCreateRequest {
         this.toolIds = toolIds;
     }
 
-    // Inner class for specific tool mapping with SI_NO and location
+    /**
+     * Tool item used to resolve a specific tool by SI_NO and location.
+     */
     public static class ToolItem {
         private String siNo;
         private String location;

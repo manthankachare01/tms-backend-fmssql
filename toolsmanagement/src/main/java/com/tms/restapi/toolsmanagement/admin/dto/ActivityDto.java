@@ -3,6 +3,11 @@ package com.tms.restapi.toolsmanagement.admin.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Activity entry used in dashboard response payloads.
+ *
+ * Each activity represents a recent tool/kits issuance, return, or asset addition.
+ */
 public class ActivityDto {
     private String title; // e.g. "Tool Issued", "Tool Returned", "Added Tool", "Added Kit"
     private String actor; // trainer name or admin name

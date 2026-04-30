@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository for persistence and querying of trainer accounts.
+ */
 @Repository
 public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 

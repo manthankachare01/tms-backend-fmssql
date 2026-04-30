@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Controller to serve WebSocket test UI
+ * Controller that serves the WebSocket test UI page.
+ *
+ * Useful for validating WebSocket connectivity and manual messaging flows.
  */
 @Controller
 @RequestMapping("/websocket")

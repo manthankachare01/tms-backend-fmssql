@@ -21,6 +21,13 @@ public class ToolExcelController {
     @Autowired
     private ToolExcelService toolExcelService;
 
+    /**
+     * Upload Excel file to import tool inventory records in bulk.
+     *
+     * API Endpoint: POST /api/tools/upload-excel
+     * Request payload: multipart/form-data with file field named "file"
+     * Response payload includes total, success, failed and duplicate counts.
+     */
     @PostMapping("/upload-excel")
     public ResponseEntity<ExcelResponse> uploadExcel(
             @RequestParam("file") MultipartFile file) {
@@ -28,4 +35,4 @@ public class ToolExcelController {
         ExcelResponse response = toolExcelService.uploadTools(file);
         return ResponseEntity.ok(response);
     }
-}
+} 

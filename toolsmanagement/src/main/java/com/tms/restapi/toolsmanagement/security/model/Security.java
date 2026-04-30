@@ -3,6 +3,12 @@ package com.tms.restapi.toolsmanagement.security.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+/**
+ * Entity representing a security staff user.
+ *
+ * Stores security personnel credentials, contact details, role, location, and
+ * employment dates for access control and audit purposes.
+ */
 @Entity
 @Table(name = "security", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class Security {

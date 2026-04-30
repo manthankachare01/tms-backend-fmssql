@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.chatbot.dto;
 
+/**
+ * Response payload returned by the chatbot endpoint.
+ *
+ * Fields include the original query, the answer text, the response type,
+ * processing time, success flag, and an optional message.
+ */
 public class ChatbotResponseDTO {
     private String query;
     private String answer;

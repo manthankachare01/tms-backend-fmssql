@@ -20,6 +20,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Service layer for generating analytics and reporting data.
+ *
+ * Provides statistics on tools, kits, issuances, staff, and locations,
+ * along with dashboard overviews and Excel export functionality.
+ */
 @Service
 public class ReportsService {
 

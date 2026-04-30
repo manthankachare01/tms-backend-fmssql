@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service layer for trainer account management.
+ *
+ * Handles trainer creation, updates, lookup, deletion, password reset, and credential verification.
+ */
 @Service
 public class TrainerService {
 

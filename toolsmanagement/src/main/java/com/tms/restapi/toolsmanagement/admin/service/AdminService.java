@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service layer for admin user management and admin-triggered issuance operations.
+ *
+ * Handles admin CRUD operations, credential resets, and delegation to issuance workflows.
+ */
 @Service
 public class AdminService {
 

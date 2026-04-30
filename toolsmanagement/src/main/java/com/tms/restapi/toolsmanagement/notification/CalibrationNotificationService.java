@@ -15,6 +15,12 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+/**
+ * Service for scheduling and delivering calibration reminder notifications.
+ *
+ * Executes daily calibration checks and sends email alerts to admins
+ * for tools approaching calibration deadlines.
+ */
 @Service
 public class CalibrationNotificationService {
 

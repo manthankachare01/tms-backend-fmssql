@@ -5,6 +5,11 @@ import com.tms.restapi.toolsmanagement.tools.model.Tool;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Response payload for kit queries.
+ *
+ * Represents kit metadata, tool membership, availability, and aggregate information.
+ */
 public class KitResponse {
 
     private Long id;

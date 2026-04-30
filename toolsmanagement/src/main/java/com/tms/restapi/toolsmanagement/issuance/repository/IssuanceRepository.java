@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository for persisted issuance entities.
+ */
 @Repository
 public interface IssuanceRepository extends JpaRepository<Issuance, Long> {
     List<Issuance> findByTrainerId(Long trainerId);

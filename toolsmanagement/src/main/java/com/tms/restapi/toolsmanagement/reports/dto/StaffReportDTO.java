@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.reports.dto;
 
+/**
+ * Response payload for staff engagement report.
+ *
+ * Aggregates active and inactive counts by staff role (admin, trainer, security),
+ * including activity percentages for each role category.
+ */
 public class StaffReportDTO {
 
     private long activeAdmins;

@@ -7,6 +7,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * One-time password (OTP) service for password reset flows.
+ *
+ * Generates, verifies, stores, and invalidates OTPs for reset operations.
+ */
 @Service
 public class OtpService {
 

@@ -1,5 +1,10 @@
 package com.tms.restapi.toolsmanagement.issuance.dto;
 
+/**
+ * Payload for rejecting an issuance request.
+ *
+ * Used by POST /api/issuance/reject to submit rejection details.
+ */
 public class RejectionRequestDto {
     private Long requestId;
     private String rejectedBy;

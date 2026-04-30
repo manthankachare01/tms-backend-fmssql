@@ -1,5 +1,8 @@
 package com.tms.restapi.toolsmanagement.kit.dto;
 
+/**
+ * Request payload for adding or updating a kit aggregate entry.
+ */
 public class KitAggregateRequest {
     private String name;
     private String remark;

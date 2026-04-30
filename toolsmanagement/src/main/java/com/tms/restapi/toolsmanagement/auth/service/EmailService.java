@@ -26,6 +26,11 @@ import com.tms.restapi.toolsmanagement.kit.model.Kit;
 import com.tms.restapi.toolsmanagement.tools.repository.ToolRepository;
 import com.tms.restapi.toolsmanagement.kit.repository.KitRepository;
 
+/**
+ * Email service used by authentication and admin flows.
+ *
+ * Sends OTP messages and credential notification emails using either Brevo or SMTP.
+ */
 @Service
 public class EmailService {
 

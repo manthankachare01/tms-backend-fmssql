@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.reports.dto;
 
+/**
+ * Response payload for tool statistics by location.
+ *
+ * Includes location-based tool inventory metrics including availability,
+ * condition states (missing, obsolete, damaged), and availability percentage.
+ */
 public class LocationStatisticsDTO {
     private String location;
     private Long totalTools;

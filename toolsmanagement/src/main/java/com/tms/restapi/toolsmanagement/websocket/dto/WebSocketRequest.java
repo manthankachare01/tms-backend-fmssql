@@ -1,7 +1,10 @@
 package com.tms.restapi.toolsmanagement.websocket.dto;
 
 /**
- * Request message sent from client to server via WebSocket
+ * Request message sent from client to server via WebSocket.
+ *
+ * Encapsulates the client action, user identity, optional payload, and
+ * request tracking identifier.
  */
 public class WebSocketRequest {
 

@@ -2,6 +2,11 @@ package com.tms.restapi.toolsmanagement.chatbot.dto;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data transfer object for predefined chatbot questions and answers.
+ *
+ * Used by /api/chatbot/qa endpoints to create, read, update, and delete Q&A pairs.
+ */
 public class ChatbotQADTO {
     private Long id;
     private String question;

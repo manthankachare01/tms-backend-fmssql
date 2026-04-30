@@ -5,6 +5,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a key issuance transaction.
+ *
+ * Tracks the issued key details, borrower information, location, status,
+ * issuance timestamp, and return timestamp.
+ */
 @Entity
 @Table(name = "key_issuance")
 public class KeyIssuance {

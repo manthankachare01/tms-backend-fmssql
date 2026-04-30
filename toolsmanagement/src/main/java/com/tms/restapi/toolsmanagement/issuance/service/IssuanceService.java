@@ -94,6 +94,48 @@ public class IssuanceService {
         toolRepository.save(tool);
     }
 
+    /**
+     * Build the complete set of tool ids that were issued — covering both
+     * standalone tools (req.getToolIds()) AND tools inside each issued kit
+     * (fetched fresh from the kit). This is the single source of truth used
+     * on the return path to decide which exact tool rows to restore.
+     *
+     * WHY: When a kit is issued, req.getToolIds() is null/empty because the
+     * frontend only sends kitIds. Without this helper the issuedToolIds set
+     * would be empty and no kit-tool availability would be restored on return.
+     */
+    private Set<Long> buildIssuedToolIds(Issuance req) {
+        Set<Long> ids = new HashSet<>();
+
+        // 1. Standalone tools issued directly
+        if (req.getToolIds() != null) {
+            for (Long id : req.getToolIds()) {
+                if (id != null) ids.add(id);
+            }
+        }
+
+        // 2. Tools that belong to each issued kit
+        if (req.getKitIds() != null) {
+            for (Long kitId : req.getKitIds()) {
+                if (kitId == null) continue;
+                try {
+                    Kit kit = kitRepository.findById(kitId).orElse(null);
+                    if (kit != null && kit.getTools() != null) {
+                        for (Tool t : kit.getTools()) {
+                            if (t != null && t.getId() != null) {
+                                ids.add(t.getId());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.warn("Could not load kit {} when building issuedToolIds: {}", kitId, e.getMessage());
+                }
+            }
+        }
+
+        return ids;
+    }
+
     // -------------------------------------------------------------------------
     // OVERDUE
     // -------------------------------------------------------------------------
@@ -262,7 +304,7 @@ public class IssuanceService {
                 kit.setReturnDate(request.getReturnDate());
                 kitRepository.save(kit);
 
-                // Update each tool inside this kit by its unique id
+                // Update each tool inside this kit by its unique id only
                 if (kit.getTools() != null) {
                     for (Tool toolRef : kit.getTools()) {
                         if (toolRef == null) continue;
@@ -408,31 +450,21 @@ public class IssuanceService {
             rr.setRemarks(body.getRemarks());
 
             // ----------------------------------------------------------------
-            // KEY FIX: Build a Set of the exact tool ids that were issued in
-            // this issuance. These are the ONLY ids whose availability should
-            // be restored on return. We never use tool_no or kit.getTools()
-            // to drive availability changes — only the ids recorded at
-            // issuance time are trusted.
+            // Build the complete set of exact tool ids that were issued.
+            // Covers BOTH cases:
+            //   - Standalone tools:  ids come from req.getToolIds()
+            //   - Kit tools:         ids come from each kit's tool list
+            //                        (fetched fresh from DB via buildIssuedToolIds)
+            //
+            // This set is the ONLY source of truth for which tool rows get
+            // their availability restored. It prevents any tool with the same
+            // tool_no from being accidentally updated.
             // ----------------------------------------------------------------
-            Set<Long> issuedToolIds = new HashSet<>();
-            if (req.getToolIds() != null) {
-                issuedToolIds.addAll(req.getToolIds());
-            }
-            // Include tools from issued kits
-            if (req.getKitIds() != null) {
-                for (Long kitId : req.getKitIds()) {
-                    Kit kit = kitRepository.findById(kitId).orElse(null);
-                    if (kit != null && kit.getTools() != null) {
-                        for (Tool tool : kit.getTools()) {
-                            if (tool.getId() != null) {
-                                issuedToolIds.add(tool.getId());
-                            }
-                        }
-                    }
-                }
-            }
+            Set<Long> issuedToolIds = buildIssuedToolIds(req);
 
-            // Track which ids we have already processed (prevent double increment)
+            logger.debug("processReturn: issuance={} issuedToolIds={}", req.getId(), issuedToolIds);
+
+            // Track which ids already processed (prevent double increment)
             Set<Long> processedReturnToolIds = new HashSet<>();
 
             boolean hasItems = body.getItems() != null && !body.getItems().isEmpty();
@@ -453,9 +485,9 @@ public class IssuanceService {
                     if (it.getToolId() != null) {
                         Long returnedToolId = it.getToolId();
 
-                        // Only update if this exact tool was issued in this issuance
+                        // Only restore if this exact tool was part of this issuance
                         if (!issuedToolIds.contains(returnedToolId)) {
-                            logger.warn("Return contains toolId {} which was not part of issuance {}. Skipping.",
+                            logger.warn("Return toolId {} was not part of issuance {}. Skipping.",
                                     returnedToolId, req.getId());
                             continue;
                         }
@@ -464,7 +496,6 @@ public class IssuanceService {
                         Tool t = toolRepository.findById(returnedToolId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Tool not found: id=" + returnedToolId));
                         applyReturnToTool(t, ri.getQuantityReturned());
-                        // Update condition/remark only for individual tool returns
                         if (ri.getCondition() != null) t.setCondition(ri.getCondition());
                         if (ri.getRemark() != null) t.setRemark(ri.getRemark());
                         toolRepository.save(t);
@@ -493,21 +524,19 @@ public class IssuanceService {
                         }
                         kitRepository.save(k);
 
-                        // KEY FIX: Only restore tools that were recorded in issuedToolIds.
-                        // kit.getTools() returns ALL tools in the kit — including tools with
-                        // duplicate tool_no that were NOT part of this issuance. The
-                        // issuedToolIds guard ensures we only touch the exact tools issued.
+                        // Restore only tools that were part of this issuance
                         if (k.getTools() != null) {
                             for (Tool toolRef : k.getTools()) {
                                 if (toolRef == null) continue;
                                 Long toolIdInKit = toolRef.getId();
                                 if (toolIdInKit == null) continue;
-                                if (!issuedToolIds.contains(toolIdInKit)) continue; // <-- THE FIX
+                                if (!issuedToolIds.contains(toolIdInKit)) continue;
                                 if (processedReturnToolIds.contains(toolIdInKit)) continue;
-                                toolRepository.findById(toolIdInKit).ifPresent(managedTool -> {
+                                Tool managedTool = toolRepository.findById(toolIdInKit).orElse(null);
+                                if (managedTool != null) {
                                     applyReturnToTool(managedTool, ri.getQuantityReturned());
                                     processedReturnToolIds.add(toolIdInKit);
-                                });
+                                }
                             }
                         }
                     }
@@ -515,20 +544,37 @@ public class IssuanceService {
 
             } else {
                 // Full return (no per-item breakdown)
-                // Use ONLY the exact issuedToolIds — never iterate kit.getTools() blindly
 
-                // Return standalone tools
-                for (Long toolId : issuedToolIds) {
-                    if (processedReturnToolIds.contains(toolId)) continue;
-                    toolRepository.findById(toolId).ifPresent(tool -> {
-                        applyReturnToTool(tool, 1);
-                        processedReturnToolIds.add(toolId);
-                    });
-                }
-
-                // Return kits
+                // --- Collect all tool IDs that belong to kits for exclusion ---
+                Set<Long> kitToolIds = new HashSet<>();
                 if (req.getKitIds() != null) {
                     for (Long kitId : req.getKitIds()) {
+                        if (kitId == null) continue;
+                        Kit kit = kitRepository.findById(kitId).orElse(null);
+                        if (kit != null && kit.getTools() != null) {
+                            for (Tool t : kit.getTools()) {
+                                if (t != null && t.getId() != null) {
+                                    kitToolIds.add(t.getId());
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // --- Restore standalone tools (those in issuedToolIds but NOT part of any kit) ---
+                for (Long toolId : issuedToolIds) {
+                    if (toolId == null || processedReturnToolIds.contains(toolId) || kitToolIds.contains(toolId)) continue;
+                    Tool tool = toolRepository.findById(toolId).orElse(null);
+                    if (tool != null) {
+                        applyReturnToTool(tool, 1);
+                        processedReturnToolIds.add(toolId);
+                    }
+                }
+
+                // --- Restore kits and their exact tools ---
+                if (req.getKitIds() != null) {
+                    for (Long kitId : req.getKitIds()) {
+                        if (kitId == null) continue;
                         Kit kit = kitRepository.findById(kitId).orElse(null);
                         if (kit == null) continue;
 
@@ -541,18 +587,18 @@ public class IssuanceService {
                         kit.setCurrentBorrowedBy(null);
                         kitRepository.save(kit);
 
-                        // KEY FIX: Only restore tools that were in issuedToolIds
+                        // Restore only the tools that belong to this kit
+                        // and were part of this issuance (guard against duplicate tool_no)
                         if (kit.getTools() != null) {
                             for (Tool toolRef : kit.getTools()) {
                                 if (toolRef == null) continue;
                                 Long toolIdInKit = toolRef.getId();
-                                if (toolIdInKit == null) continue;
-                                if (!issuedToolIds.contains(toolIdInKit)) continue; // <-- THE FIX
-                                if (processedReturnToolIds.contains(toolIdInKit)) continue;
-                                toolRepository.findById(toolIdInKit).ifPresent(managedTool -> {
+                                if (toolIdInKit == null || processedReturnToolIds.contains(toolIdInKit)) continue;
+                                Tool managedTool = toolRepository.findById(toolIdInKit).orElse(null);
+                                if (managedTool != null) {
                                     applyReturnToTool(managedTool, 1);
                                     processedReturnToolIds.add(toolIdInKit);
-                                });
+                                }
                             }
                         }
                     }

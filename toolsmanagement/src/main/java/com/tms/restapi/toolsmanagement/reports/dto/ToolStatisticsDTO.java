@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.reports.dto;
 
+/**
+ * Response payload for tool inventory statistics.
+ *
+ * Includes counts for available/unavailable tools, availability percentage,
+ * and tools requiring calibration, damaged, missing, or obsolete.
+ */
 public class ToolStatisticsDTO {
     private Long totalTools;
     private Long availableTools;

@@ -7,6 +7,9 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+/**
+ * Repository for tool kit persistence and search operations.
+ */
 public interface KitRepository extends JpaRepository<Kit, Long> {
 
     List<Kit> findByLocationIgnoreCase(String location);

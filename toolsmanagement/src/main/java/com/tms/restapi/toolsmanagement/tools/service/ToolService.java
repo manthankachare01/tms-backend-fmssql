@@ -10,13 +10,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service layer for tool inventory operations.
+ *
+ * Handles creation, retrieval, update, deletion, search, and issuance-related updates
+ * for tool entities.
+ */
 @Service
 public class ToolService {
 
     @Autowired
     private ToolRepository toolRepository;
 
-    // Helper: set next calibration date
+    // Helper: calculate and assign the next calibration date based on the last calibration date and period
     private void updateNextCalibrationDate(Tool tool) {
         if (tool.isCalibrationRequired()
                 && tool.getLastCalibrationDate() != null

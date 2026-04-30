@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.reports.dto;
 
+/**
+ * Response payload for kit inventory statistics.
+ *
+ * Provides counts for available and unavailable kits,
+ * total kit count, and availability percentage.
+ */
 public class KitStatisticsDTO {
     private Long totalKits;
     private Long availableKits;

@@ -7,6 +7,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Database entity representing a return record.
+ *
+ * Tracks the actual return timestamp, processor details, remarks, and individual
+ * items returned for a particular issuance.
+ */
 @Entity
 @Table(name = "return_records")
 public class ReturnRecord {

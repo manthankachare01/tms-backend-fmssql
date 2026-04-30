@@ -1,5 +1,13 @@
 package com.tms.restapi.toolsmanagement.chatbot.dto;
 
+/**
+ * Request payload for chatbot query submission.
+ *
+ * Example JSON:
+ * {
+ *   "query": "Show tools available at Pune"
+ * }
+ */
 public class ChatbotRequestDTO {
     private String query;
 

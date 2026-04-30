@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.reports.dto;
 
+/**
+ * Response payload for kit statistics by location.
+ *
+ * Provides kit availability metrics including total, available, unavailable,
+ * and availability percentage for a specific location.
+ */
 public class KitLocationStatisticsDTO {
     private String location;
     private Long totalKits;

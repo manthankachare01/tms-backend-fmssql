@@ -2,6 +2,12 @@ package com.tms.restapi.toolsmanagement.notification.dto;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data transfer object for notification payloads.
+ *
+ * Represents notification metadata including type, severity, target audience,
+ * related entity references, and read status.
+ */
 public class NotificationDto {
 
     private Long id;

@@ -2,6 +2,12 @@ package com.tms.restapi.toolsmanagement.admin.dto;
 
 import java.util.List;
 
+/**
+ * Response payload for admin and superadmin dashboard endpoints.
+ *
+ * This DTO holds summary counts for tools, kits, issuances, returns,
+ * overdue items, damaged items, calibration requirements, and recent activities.
+ */
 public class AdminDashboardResponse {
     private int totalTools;
     private int totalKits;

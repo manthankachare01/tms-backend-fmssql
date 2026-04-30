@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository for persisting and querying key issuance records.
+ */
 public interface KeyIssuanceRepository extends JpaRepository<KeyIssuance, Long> {
 
     Optional<KeyIssuance> findByIssuanceId(String issuanceId);

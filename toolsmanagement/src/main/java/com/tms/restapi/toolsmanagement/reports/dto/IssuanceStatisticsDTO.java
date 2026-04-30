@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.reports.dto;
 
+/**
+ * Response payload for issuance statistics and analytics.
+ *
+ * Tracks total issuances, issued/returned/pending status,
+ * approval states, and rejection metrics.
+ */
 public class IssuanceStatisticsDTO {
     private Long totalIssuances;
     private Long issuedTools;

@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * Repository for persistence and query operations on security staff accounts.
+ */
 public interface SecurityRepository extends JpaRepository<Security, Long> {
 
     boolean existsByEmail(String email);

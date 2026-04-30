@@ -5,6 +5,9 @@ import com.tms.restapi.toolsmanagement.keyissuance.model.KeyIssuance;
 
 import java.util.List;
 
+/**
+ * Service interface defining key issuance operations.
+ */
 public interface KeyIssuanceService {
 
     KeyIssuance createIssuance(KeyIssuanceRequest request);

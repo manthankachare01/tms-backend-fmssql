@@ -3,6 +3,12 @@ package com.tms.restapi.toolsmanagement.notification.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a system notification.
+ *
+ * Tracks notification type (tool missing, calibration alert, return overdue, etc.),
+ * severity level, target role, read status, and associated entity references.
+ */
 @Entity
 @Table(name = "notifications")
 public class Notification {

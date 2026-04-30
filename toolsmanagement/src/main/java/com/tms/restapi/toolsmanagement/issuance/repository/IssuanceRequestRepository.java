@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository for pending issuance requests awaiting admin action.
+ */
 @Repository
 public interface IssuanceRequestRepository extends JpaRepository<IssuanceRequest, Long> {
     List<IssuanceRequest> findByLocation(String location);

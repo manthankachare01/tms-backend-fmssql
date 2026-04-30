@@ -10,6 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Implementation of key issuance service operations.
+ *
+ * Handles issuance creation, retrieval by location/status, and marking returns.
+ */
 @Service
 @Transactional
 public class KeyIssuanceServiceImpl implements KeyIssuanceService {

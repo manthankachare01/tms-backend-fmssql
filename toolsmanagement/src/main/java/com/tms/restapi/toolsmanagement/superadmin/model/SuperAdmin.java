@@ -2,6 +2,12 @@ package com.tms.restapi.toolsmanagement.superadmin.model;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity representing a super administrator account.
+ *
+ * SuperAdmin users hold high-level system privileges and are used for top-tier
+ * application administration and configuration.
+ */
 @Entity
 @Table(name = "super_admin")
 public class SuperAdmin {

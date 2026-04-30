@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Payload for processing a return of issued tools or kits.
+ *
+ * Used by PUT /api/issuance/process-return to report returned items and conditions.
+ */
 public class ReturnRequestDto {
     private Long issuanceId;
     

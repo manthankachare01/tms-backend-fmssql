@@ -1,5 +1,10 @@
 package com.tms.restapi.toolsmanagement.reports.dto;
 
+/**
+ * Response payload for tool usage and activity report.
+ *
+ * Tracks tool issuance history, current availability, location, and usage categorization.
+ */
 public class ToolUsageReportDTO {
     private Long toolId;
     private String description;

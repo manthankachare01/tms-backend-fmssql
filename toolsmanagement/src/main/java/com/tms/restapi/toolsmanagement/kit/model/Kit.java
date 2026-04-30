@@ -7,6 +7,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity representing a kit of tools.
+ *
+ * Kits group multiple tools for a specific training or maintenance purpose,
+ * track availability, borrow history, and associated aggregate metadata.
+ */
 @Entity
 @Table(name = "kits")
 public class Kit {

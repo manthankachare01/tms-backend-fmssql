@@ -1,5 +1,10 @@
 package com.tms.restapi.toolsmanagement.issuance.dto;
 
+/**
+ * Payload for approving an issuance request.
+ *
+ * Used by POST /api/issuance/approve to submit approval details.
+ */
 public class ApprovalRequestDto {
     private Long requestId;
     private String approvedBy;

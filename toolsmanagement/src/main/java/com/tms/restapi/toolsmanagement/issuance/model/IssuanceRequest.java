@@ -5,6 +5,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Database entity representing a pending issuance request.
+ *
+ * Stores the details of tool/kit requests awaiting approval or rejection by admins.
+ */
 @Entity
 @Table(name = "issuance_requests_pending")
 public class IssuanceRequest {

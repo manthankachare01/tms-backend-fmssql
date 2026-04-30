@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+/**
+ * Controller exposing trainer dashboard metrics.
+ *
+ * Provides a trainer-specific dashboard summary for issuance, returns, overdue items,
+ * and recent activity.
+ */
 @RestController
 @RequestMapping("/api/trainers/dashboard")
 @CrossOrigin(origins = "*")
@@ -20,6 +26,14 @@ public class TrainerDashboardController {
 
     // GET /api/trainers/dashboard?trainerId=123
     @GetMapping
+    /**
+     * Retrieve the trainer dashboard summary.
+     *
+     * API Endpoint: GET /api/trainers/dashboard?trainerId={trainerId}
+     *
+     * @param trainerId Trainer identifier
+     * @return ResponseEntity containing dashboard metrics for the trainer
+     */
     public ResponseEntity<AdminDashboardResponse> getDashboard(@RequestParam Long trainerId) {
         AdminDashboardResponse resp = dashboardService.getDashboardForTrainer(trainerId);
         return ResponseEntity.ok(resp);

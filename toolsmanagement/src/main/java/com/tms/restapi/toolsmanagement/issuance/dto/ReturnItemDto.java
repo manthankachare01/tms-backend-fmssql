@@ -1,5 +1,10 @@
 package com.tms.restapi.toolsmanagement.issuance.dto;
 
+/**
+ * Individual return item details for a return request.
+ *
+ * Either toolId or kitId should be provided for each returned item.
+ */
 public class ReturnItemDto {
     private Long toolId;
     private Long kitId;

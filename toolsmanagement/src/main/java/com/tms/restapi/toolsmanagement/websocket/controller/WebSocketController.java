@@ -10,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * WebSocket Controller for handling real-time data communication
- * Clients connect to: ws://localhost:8080/ws
+ * WebSocket Controller for handling real-time tool, kit, and issuance updates.
+ *
+ * Receives WebSocket requests from clients under /app/* mappings and broadcasts
+ * responses to topic destinations for subscribed clients.
  */
 @Controller
 public class WebSocketController {

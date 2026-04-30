@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.excel.dto;
 
+/**
+ * Response DTO for Excel upload operations.
+ *
+ * Includes counts for processed, successful, failed, and duplicate records,
+ * plus a summary message.
+ */
 public class ExcelResponse {
 
     private int totalRecords;

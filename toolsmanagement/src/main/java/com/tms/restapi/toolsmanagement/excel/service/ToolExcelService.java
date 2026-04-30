@@ -16,6 +16,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for processing Excel uploads and converting rows into tool records.
+ *
+ * Handles duplicate detection, validation, calibration parsing, and bulk save operations.
+ */
 @Service
 public class ToolExcelService {
 
@@ -25,6 +30,13 @@ public class ToolExcelService {
     private final DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
+    /**
+     * Reads the provided Excel file and imports tool data into the database.
+     *
+     * Expected sheet layout begins at row index 4, with columns for location,
+     * serial number, tool number, description, storage location, quantity,
+     * condition flags, calibration settings, remark, and other metadata.
+     */
     public ExcelResponse uploadTools(MultipartFile file) {
 
         int total = 0;

@@ -22,6 +22,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service layer for building admin dashboard summary data.
+ *
+ * Aggregates tool, kit, issuance, and return statistics for a given location.
+ */
 @Service
 public class AdminDashboardService {
 

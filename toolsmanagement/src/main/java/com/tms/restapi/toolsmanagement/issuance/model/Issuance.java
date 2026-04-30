@@ -5,6 +5,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Database entity representing a tool/kit issuance record.
+ *
+ * This entity tracks the issuance lifecycle from request creation through approval,
+ * issuance, and return, including trainer details, status, and approval metadata.
+ */
 @Entity
 @Table(name = "issuance_requests")
 public class Issuance {

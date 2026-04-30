@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a tool in inventory.
+ *
+ * Captures tool metadata, location, availability, calibration state,
+ * issuance history, and kit membership information.
+ */
 @Entity
 @Table(name = "tools")
 public class Tool {

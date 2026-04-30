@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Service for generating notification records.
+ *
+ * Creates notifications for critical events such as missing tools,
+ * obsolete tools, damaged tools, calibration alerts, and overdue returns.
+ */
 @Service
 public class NotificationGeneratorService {
 

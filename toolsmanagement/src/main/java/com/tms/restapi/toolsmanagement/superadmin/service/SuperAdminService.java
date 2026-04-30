@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service layer for creating and maintaining superadmin user accounts.
+ *
+ * Responsible for secure password encoding, account updates, and email notifications
+ * when credential changes occur.
+ */
 @Service
 public class SuperAdminService {
 

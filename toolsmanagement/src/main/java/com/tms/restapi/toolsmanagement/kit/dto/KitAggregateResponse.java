@@ -1,5 +1,8 @@
 package com.tms.restapi.toolsmanagement.kit.dto;
 
+/**
+ * Response payload for a kit aggregate entry.
+ */
 public class KitAggregateResponse {
     private Long id;
     private String name;

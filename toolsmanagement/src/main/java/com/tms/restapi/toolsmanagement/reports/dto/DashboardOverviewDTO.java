@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.reports.dto;
 
+/**
+ * Response payload for dashboard overview summary.
+ *
+ * Aggregates key metrics including total tools, trainers, admins,
+ * tool availability %, pending approvals, and maintenance requirements.
+ */
 public class DashboardOverviewDTO {
     private Long totalTools;
     private Long totalIssuances;

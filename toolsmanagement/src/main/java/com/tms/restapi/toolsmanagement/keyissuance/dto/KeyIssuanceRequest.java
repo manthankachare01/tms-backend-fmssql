@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.keyissuance.dto;
 
+/**
+ * Request payload for creating a key issuance record.
+ *
+ * Contains identifying information for the security personnel who issued the key
+ * and the trainer who received it, along with location metadata.
+ */
 public class KeyIssuanceRequest {
 
     private String securityId;

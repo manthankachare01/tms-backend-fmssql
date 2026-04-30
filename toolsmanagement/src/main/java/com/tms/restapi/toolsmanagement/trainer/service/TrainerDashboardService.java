@@ -23,6 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service that prepares trainer-specific dashboard summaries.
+ *
+ * Aggregates issuance, return, overdue, damage, and recent activity details
+ * for the trainer dashboard UI.
+ */
 @Service
 public class TrainerDashboardService {
 
@@ -41,6 +47,12 @@ public class TrainerDashboardService {
     @Autowired
     private com.tms.restapi.toolsmanagement.issuance.service.IssuanceService issuanceService;
 
+    /**
+     * Build the dashboard response for a trainer.
+     *
+     * Gathers approved issuances, returns, overdue counts, damage metrics, and
+     * recent activity history for the given trainer.
+     */
     public AdminDashboardResponse getDashboardForTrainer(Long trainerId) {
         AdminDashboardResponse resp = new AdminDashboardResponse();
         if (trainerId == null) return resp;

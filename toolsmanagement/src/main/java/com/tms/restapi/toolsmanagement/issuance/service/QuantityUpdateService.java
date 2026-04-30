@@ -9,6 +9,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Utility service for adjusting tool and kit quantities during issuance flows.
+ *
+ * Used by issuance workflows to decrement availability when items are issued and
+ * restore availability when items are returned.
+ */
 @Service
 public class QuantityUpdateService {
 

@@ -4,6 +4,9 @@ import com.tms.restapi.toolsmanagement.issuance.model.ReturnRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository for return records and related query methods.
+ */
 @Repository
 public interface ReturnRepository extends JpaRepository<ReturnRecord, Long> {
 	// Find return records by the associated issuance's location

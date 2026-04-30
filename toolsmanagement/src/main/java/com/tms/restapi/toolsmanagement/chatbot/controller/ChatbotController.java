@@ -13,6 +13,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller for chatbot operations.
+ *
+ * Provides endpoints for querying the chatbot, managing predefined Q&A,
+ * and checking service health.
+ *
+ * Base path: /api/chatbot
+ */
 @RestController
 @RequestMapping("/api/chatbot")
 @CrossOrigin(origins = "*")
@@ -22,8 +30,14 @@ public class ChatbotController {
     private ChatbotService chatbotService;
 
     /**
-     * Process user query and get answer from chatbot
-     * Supports both predefined and dynamic database queries
+     * Process user query and get answer from chatbot.
+     * Supports both predefined Q&A and dynamic database query responses.
+     *
+     * API Endpoint: POST /api/chatbot/ask
+     * Request Payload Sample:
+     * {
+     *   "query": "Is hammer available at Pune?"
+     * }
      */
     @PostMapping("/ask")
     public ResponseEntity<?> askChatbot(@RequestBody ChatbotRequestDTO request) {
@@ -45,7 +59,10 @@ public class ChatbotController {
     }
 
     /**
-     * Get all predefined Q&A
+     * Get all predefined Q&A entries stored in the chatbot knowledge base.
+     *
+     * API Endpoint: GET /api/chatbot/qa/all
+     * Response payload contains success flag, data list, and total count.
      */
     @GetMapping("/qa/all")
     public ResponseEntity<?> getAllQAs() {
@@ -65,7 +82,14 @@ public class ChatbotController {
     }
 
     /**
-     * Add new predefined Q&A
+     * Add new predefined Q&A entry.
+     *
+     * API Endpoint: POST /api/chatbot/qa/add
+     * Request Payload Sample:
+     * {
+     *   "question": "What is the process to return a tool?",
+     *   "answer": "Please fill the return form and submit it to your admin."
+     * }
      */
     @PostMapping("/qa/add")
     public ResponseEntity<?> addQA(@RequestBody ChatbotQADTO qaDTO) {

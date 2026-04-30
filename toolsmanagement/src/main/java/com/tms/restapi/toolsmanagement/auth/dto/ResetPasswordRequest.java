@@ -1,5 +1,14 @@
 package com.tms.restapi.toolsmanagement.auth.dto;
 
+/**
+ * Request payload for resetting a user password after successful OTP verification.
+ *
+ * Expected JSON fields:
+ * - role: ADMIN, TRAINER, SECURITY, or SUPERADMIN
+ * - email: registered email address
+ * - newPassword: new password value
+ * - confirmPassword: confirmation of the new password
+ */
 public class ResetPasswordRequest {
 
     private String role;           // e.g. "ADMIN" or "TRAINER"

@@ -9,6 +9,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service layer for notification management and retrieval.
+ *
+ * Retrieves and filters notifications by user role (superadmin, admin, trainer).
+ * Provides methods to mark notifications as read and update notification status.
+ */
 @Service
 public class NotificationService {
 

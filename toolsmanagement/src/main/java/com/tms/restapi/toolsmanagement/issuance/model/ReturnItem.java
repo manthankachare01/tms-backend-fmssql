@@ -3,6 +3,11 @@ package com.tms.restapi.toolsmanagement.issuance.model;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+/**
+ * Database entity for a single returned item.
+ *
+ * Contains the tool or kit identifier, returned quantity, condition, and remark.
+ */
 @Entity
 @Table(name = "return_items")
 public class ReturnItem {

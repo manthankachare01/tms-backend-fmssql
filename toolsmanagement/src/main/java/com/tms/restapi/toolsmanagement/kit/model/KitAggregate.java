@@ -2,6 +2,11 @@ package com.tms.restapi.toolsmanagement.kit.model;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity representing an aggregate entry on a kit.
+ *
+ * Aggregates allow grouping related kit items or notes into named sections.
+ */
 @Entity
 @Table(name = "kit_aggregates")
 public class KitAggregate {

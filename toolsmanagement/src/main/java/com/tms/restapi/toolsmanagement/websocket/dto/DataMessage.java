@@ -3,7 +3,9 @@ package com.tms.restapi.toolsmanagement.websocket.dto;
 import java.time.LocalDateTime;
 
 /**
- * Message class for real-time data transmission via WebSocket
+ * Message wrapper used for WebSocket payloads.
+ *
+ * Contains a message type, sender identifier, payload data, timestamp, and status.
  */
 public class DataMessage {
 

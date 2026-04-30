@@ -1,5 +1,11 @@
 package com.tms.restapi.toolsmanagement.reports.dto;
 
+/**
+ * Response payload for staff statistics by location.
+ *
+ * Provides location-based activity metrics for trainers and security personnel,
+ * including active/inactive counts and activity percentages.
+ */
 public class StaffLocationReportDTO {
     private String location;
 

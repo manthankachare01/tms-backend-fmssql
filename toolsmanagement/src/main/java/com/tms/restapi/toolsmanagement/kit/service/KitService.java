@@ -14,8 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Collectors;
 
+/**
+ * Service layer for managing tool kits.
+ *
+ * Supports kit creation, update, retrieval, search, and deletion with tool membership tracking.
+ */
 @Service
 public class KitService {
 

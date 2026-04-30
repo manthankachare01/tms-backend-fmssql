@@ -3,6 +3,12 @@ package com.tms.restapi.toolsmanagement.trainer.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+/**
+ * Entity representing a trainer user.
+ *
+ * Stores trainer credentials, contact details, location, and usage metrics
+ * used for issuing tools and tracking training operations.
+ */
 @Entity
 @Table(name = "trainers")
 public class Trainer {

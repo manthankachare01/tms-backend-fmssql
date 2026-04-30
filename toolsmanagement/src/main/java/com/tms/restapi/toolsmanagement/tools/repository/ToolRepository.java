@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository for managing tool persistence and lookup operations.
+ */
 @Repository
 public interface ToolRepository extends JpaRepository<Tool, Long> {
 

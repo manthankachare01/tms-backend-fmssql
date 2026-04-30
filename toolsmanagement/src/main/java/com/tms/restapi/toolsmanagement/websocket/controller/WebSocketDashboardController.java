@@ -11,8 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * WebSocket Dashboard Controller for real-time dashboard updates
- * Handles dashboard data streaming and live notifications
+ * WebSocket Dashboard Controller for real-time dashboard updates.
+ *
+ * Streams dashboard metrics, statistics, and activity updates to trainers and admins.
  */
 @Controller
 public class WebSocketDashboardController {

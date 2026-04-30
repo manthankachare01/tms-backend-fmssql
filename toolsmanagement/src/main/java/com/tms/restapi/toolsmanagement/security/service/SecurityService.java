@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service layer for managing security staff users.
+ *
+ * Handles creation, lookup, update, deletion, password reset, and search operations.
+ */
 @Service
 public class SecurityService {
 
